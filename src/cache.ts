@@ -4,10 +4,10 @@ import { addCORSToHeaders, addDateToHeaders } from './headers.ts';
 const cacheKey = 'cache';
 let cache: Cache | undefined;
 
-if (typeof caches !== undefined) {
-  await caches.delete(cacheKey);
-  cache = await caches.open(cacheKey);
-}
+// if (typeof caches !== undefined) {
+//   await caches.delete(cacheKey);
+//   cache = await caches.open(cacheKey);
+// }
 
 export const getCachedResponse = async (request: Request) => {
   enum One {
