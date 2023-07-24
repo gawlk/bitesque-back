@@ -2,12 +2,8 @@ import { HEADERS_DATE_KEY } from './constants.ts';
 import { addCORSToHeaders, addDateToHeaders } from './headers.ts';
 
 const cacheKey = 'cache';
-let cache: Cache | undefined;
-
-// if (typeof caches !== undefined) {
-//   await caches.delete(cacheKey);
-//   cache = await caches.open(cacheKey);
-// }
+await caches.delete(cacheKey);
+const cache = await caches.open(cacheKey);
 
 export const getCachedResponse = async (request: Request) => {
   enum One {
@@ -17,7 +13,7 @@ export const getCachedResponse = async (request: Request) => {
     Day = 24 * One.Hour,
   }
 
-  const response = await cache?.match(request);
+  const response = await cache.match(request);
 
   const { pathname, search } = new URL(request.url);
 
@@ -40,7 +36,7 @@ export const getCachedResponse = async (request: Request) => {
   } else {
     console.log(`${pathname}${search} - live`);
 
-    await cache?.delete(request);
+    await cache.delete(request);
   }
 };
 
@@ -55,7 +51,7 @@ export const setCachedResponse = async (
 
   response = new Response(response.body, { ...response, headers });
 
-  await cache?.put(
+  await cache.put(
     request,
     response.clone(),
   );

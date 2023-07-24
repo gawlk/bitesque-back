@@ -15,15 +15,14 @@ const fetchAndComputeLookIntoBitcoinData = async (
 
   const data = json.response.chart.figure.data[dataIndex];
 
-  return jsonToResponse((data.y as number[]).map((value, index) => ({
+  return jsonToResponse((data.y as (number | null)[]).map((value, index) => ({
     time: data.x[index].split('T')[0],
-    value,
+    ...(typeof value === 'number' ? { value } : {}),
   })));
 };
 
 export const getBitcoinResponse = async (pathname: string) => {
   switch (pathname.replace('/bitcoin', '')) {
-    // https://www.decentrader.com/charts/btcusd-liquidity-map/
     case '/realized': {
       return fetchAndComputeLookIntoBitcoinData(
         'https://www.lookintobitcoin.com/django_plotly_dash/app/realized_price/_dash-update-component',
@@ -117,7 +116,7 @@ export const getBitcoinResponse = async (pathname: string) => {
         'https://www.decentrader.com/charts/btcusd-liquidity-map/',
       );
 
-      const res = (await fetchJSON(
+      const res = await fetchJSON(
         'https://www.decentrader.com/api',
         {
           'jsonrpc': '2.0',
@@ -125,7 +124,7 @@ export const getBitcoinResponse = async (pathname: string) => {
           'method': 'getOHLCHourlyCalculations',
           'params': ['BTCUSDT'],
         },
-      ));
+      );
 
       const json = await res.json();
 
